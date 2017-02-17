@@ -60,9 +60,9 @@ add_filter('tablepress_table_raw_render_data', function($table, $render_options)
 add_filter('tablepress_table_output', function($output, $table, $render_options) {
 
   // table
-  $table  = fragment_to_dom($output, '//table');
-  $doc    = $table->documentElement;
-  $xpath  = new DOMXpath($doc);
+  $table  = fragment_to_dom($output);
+  $dom    = $table->ownerDocument;
+  $xpath  = new DOMXpath($dom);
 
   // thead
   $theads = $xpath->query("//thead");
@@ -71,8 +71,8 @@ add_filter('tablepress_table_output', function($output, $table, $render_options)
   }
   // thead rows + cols
   $thead = $theads->item(0);
-  $thead_row   = $doc->getElementsByTagName('thead')->item(0);
-  $thead_cells = $doc->getElementsByTagName('th');
+  $thead_row   = $dom->getElementsByTagName('thead')->item(0);
+  $thead_cells = $dom->getElementsByTagName('th');
 
   // all #head_rowspan# cells
   $trigger_cells = $xpath->query(".//td[not(ancestor::thead) and not(ancestor::tfoot) and text() = '" . TABLEPRESS_SPAN_OUTSIDE . "']");

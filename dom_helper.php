@@ -11,16 +11,21 @@ function load_dom($html) {
 
 // HTML fragment to DOM
 // Returns element reference (for passed selector) for fragment
-// element->documentElement for containing DOMDocument
-function fragment_to_dom($html, $selector) {
+// element->ownerDocument for containing DOMDocument
+function fragment_to_dom($html, $selector = false) {
   $dom = load_dom($html);
 
   // Element reference for fragment
-  $xpath  = new DOMXpath($dom);
-  $result = $xpath->query($selector);
-  $el     = $result->item(0);
+  if($selector) {
+    $xpath  = new DOMXpath($dom);
+    $result = $xpath->query($selector);
+    $el     = $result->item(0);
+  } else {
+    $el  = $dom->getElementsByTagName('body')->item(0);
+  }
+  
 
-  $el->documentElement = $dom; // for unknown reasons the element has no documentElement property
+  //$el->documentElement = $dom; // for unknown reasons the element has no documentElement property
   return $el;
 }
 
