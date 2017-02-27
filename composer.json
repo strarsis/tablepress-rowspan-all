@@ -1,0 +1,24 @@
+{
+    "name": "strarsis/tablepress-rowspan-all",
+    "description": "TablePress Extension: Rowspans everywhere.",
+    "homepage": "https://github.com/strarsis/tablepress-rowspan-all",
+    "keywords": [
+        "WordPress", "plugin", "TablePress", "extension", "rows", "rowspan", "thead"
+    ],
+    "support": {
+        "issues": "https://github.com/strarsis/tablepress-rowspan-all/issues",
+        "source": "https://github.com/strarsis/tablepress-rowspan-all"
+    },
+    "license": "GPLv2 or later",
+    "authors": [
+        {
+            "name": "strarsis",
+            "email": "strarsis@gmail.com"
+        }
+    ],
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=5.4.0",
+        "composer/installers": "~1.0"
+    }
+}
