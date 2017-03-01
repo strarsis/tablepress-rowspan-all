@@ -4,6 +4,7 @@ Plugin Name: TablePress Extension: Rowspans everywhere
 Description: Allows using rowspans in thead.
 Version: 1.0.0
 Author: strarsis <strarsis@gmail.com>
+GitHub Plugin URI: strarsis/tablepress-rowspan-all
 */
 
 require_once 'dom_helper.php';
