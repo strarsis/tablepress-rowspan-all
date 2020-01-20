@@ -1,5 +1,6 @@
 <?php
 
+if(  !function_exists('load_dom')  ) {
 // Loads HTML properly with encoding
 function load_dom($html) {
   $dom = new DOMDocument('1.0', 'utf-8');
@@ -8,13 +9,14 @@ function load_dom($html) {
   libxml_clear_errors();            // "
   return $dom;
 }
+}
 
+if(  !function_exists('fragment_to_dom')  ) {
 // HTML fragment to DOM
 // Returns element reference (for passed selector) for fragment
 // element->ownerDocument for containing DOMDocument
 function fragment_to_dom($html, $selector = false) {
   $dom = load_dom($html);
-
   // Element reference for fragment
   if($selector) {
     $xpath  = new DOMXpath($dom);
@@ -24,11 +26,12 @@ function fragment_to_dom($html, $selector = false) {
     $el  = $dom->getElementsByTagName('body')->item(0);
   }
   
-
   //$el->documentElement = $dom; // for unknown reasons the element has no documentElement property
   return $el;
 }
+}
 
+if(  !function_exists('dom_to_fragment')  ) {
 // DOM to HTML fragment
 function dom_to_fragment($el) {
   $tempDom = new DOMDocument('1.0', 'utf-8');
@@ -37,7 +40,9 @@ function dom_to_fragment($el) {
   $html = $tempDom->saveHTML();
   return $html;
 }
+}
 
+if(  !function_exists('dom_parent_position')  ) {
 // Determines position of child node in parent node
 // Returns -1 if node wasn't found in parent - 
 // which happens with a root element that is no child of another element.
@@ -52,7 +57,9 @@ function dom_parent_position($el) {
   }
   return -1;
 }
+}
 
+if(  !function_exists('dom_change_tagname')  ) {
 // Changes the tag name of a node
 // (http://stackoverflow.com/questions/8163298/how-do-i-change-xml-tag-names-with-php)
 function dom_change_tagname( DOMElement $oldTag, $newTagName ) {
@@ -68,4 +75,5 @@ function dom_change_tagname( DOMElement $oldTag, $newTagName ) {
         $newTag->appendChild($oldTag->removeChild($child));
     }
     return $newTag;
+}
 }
