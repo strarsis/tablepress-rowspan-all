@@ -7,6 +7,19 @@ Author: strarsis <strarsis@gmail.com>
 GitHub Plugin URI: strarsis/tablepress-rowspan-all
 */
 
+
+/*
+ * TablePress plugin caches the table markup (as transients).
+ * If the table markup doesn't change after installing/updating this plugin,
+ * the TablePress cache may has to be invalidated.
+ * Either delete the TablePress-related transients,
+ * all transients (as transients should only be used for temporary data),
+ * or update the cache by re-saving the tables that should use 
+ * this plugin by using the `outside_rowspan` trigger word.
+ * 
+ */
+
+
 require_once 'dom_helper.php';
 
 const TABLEPRESS_ROWSPAN         = '#rowspan#';
