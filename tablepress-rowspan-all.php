@@ -14,9 +14,9 @@ GitHub Plugin URI: strarsis/tablepress-rowspan-all
  * the TablePress cache may has to be invalidated.
  * Either delete the TablePress-related transients,
  * all transients (as transients should only be used for temporary data),
- * or update the cache by re-saving the tables that should use 
+ * or update the cache by re-saving the tables that should use
  * this plugin by using the `outside_rowspan` trigger word.
- * 
+ *
  */
 
 
@@ -26,10 +26,11 @@ const TABLEPRESS_ROWSPAN         = '#rowspan#';
 const TABLEPRESS_ROWSPAN_OUTSIDE = '#outside_rowspan#';
 
 
-// Replace #rowspan# trigger word in table header (thead) cells with something else to preserve them 
+// Replace #rowspan# trigger word in table header (thead) cells with something else to preserve them
 // as they would be, although ignored by TablePress, they are still cleaned up by it
 // @see https://github.com/TobiasBg/TablePress/blob/master/classes/class-render.php#L53
-// (TablePress already uses #rowspan# but only between table body cells, it ignores it between table header and body cells)
+// (TablePress already uses #rowspan# but only between table body cells,
+//   it ignores it between table header and body cells)
 function tablepress_ext_rowspan_all_trigger_words($table, $render_options) {
     // $table is a nested array
 
@@ -37,11 +38,15 @@ function tablepress_ext_rowspan_all_trigger_words($table, $render_options) {
     $rows = $table['data'];
 
     // more than two row for thead + potential rowspan making sense at all
-    if (count($rows) <= 1)
+    if (count($rows) <= 1) {
         return $table; // skip
+    }
 
     // with a tfoot, there must be at least three rows (header, middle, footer)
-    if ($render_options['table_head'] && (!$render_options['table_foot'] || $render_options['table_foot'] && count($rows) <= 2)) {
+    if ($render_options['table_head'] and
+        (!$render_options['table_foot'] or
+          ($render_options['table_foot'] and count($rows) <= 2)
+        )) {
 
         $last_row_no = 0;
         for ($row_no = 1; $row_no < count($rows); $row_no++) {
@@ -52,8 +57,9 @@ function tablepress_ext_rowspan_all_trigger_words($table, $render_options) {
 
                 // only continous rows after head
                 if ($col === TABLEPRESS_ROWSPAN) {
-                    if ($row_no > ($last_row_no + 1))
+                    if ($row_no > ($last_row_no + 1)) {
                         return $table; // skip table
+                    }
 
                     $last_row_no = $row_no;
 
@@ -81,22 +87,39 @@ function tablepress_ext_rowspan_all_adjust_html($output, $table, $render_options
 
     // thead
     $theads = $xpath->query('//thead');
-    if ($theads->length === 0)
+    if ($theads->length === 0) {
         return $output; // skip
+    }
     $thead = $theads->item(0);
 
-    $thead_row   = $thead->getElementsByTagName('tr')->item(0);
-    $thead_cells = $thead_row->getElementsByTagName('th');
+    // trs
+    $thead_trs = $thead->getElementsByTagName('tr');
+    if ($thead_trs->length === 0) {
+        return $output; // skip
+    }
+
+    // tr
+    $thead_first_row = $thead_trs->item(0);
+
+    // thead tds (cells)
+    $thead_cells = $thead_first_row->getElementsByTagName('th');
+    if ($thead_cells->length === 0) {
+        return $output; // skip
+    }
 
 
     // thead cells can also have colspans
     $thead_cells_phys = array();
     foreach ($thead_cells as $thead_cell_index => $thead_cell) {
+        if (!isset($thead_cell)) {
+            continue;
+        }
         $colspan_val = $thead_cell->getAttribute('colspan');
         $colspan     = !empty($colspan_val) ? $colspan_val : 1; // default colspan = 1
 
-        for($ins_col = 0; $ins_col < $colspan; $ins_col++)
-            $thead_cells_phys[] = $thead_cell_index - 1; // 0-based index!
+        for ($ins_col = 0; $ins_col < $colspan; $ins_col++) {
+            $thead_cells_phys[] = $thead_cell_index;
+        }
     }
 
 
@@ -111,8 +134,9 @@ function tablepress_ext_rowspan_all_adjust_html($output, $table, $render_options
 
         // only continous rows after head (2nd test)
         $row_no = dom_parent_position($row);
-        if ($row_no > ($last_row_no + 1)) // when more than one row is skipped
+        if ($row_no > ($last_row_no + 1)) { // when more than one row is skipped
             continue;
+        }
         $last_row_no = $row_no;
 
         // find thead cell above this cell (in same physical column)
@@ -121,6 +145,9 @@ function tablepress_ext_rowspan_all_adjust_html($output, $table, $render_options
         $thead_cell         = $thead_cells->item($thead_cell_phys_no);
 
         // update rowspan of thead cell
+        if (!isset($thead_cell)) {
+            continue;
+        }
         $cur_rowspan_val = $thead_cell->getAttribute('rowspan');
         $cur_rowspan     = !empty($cur_rowspan_val) ? $cur_rowspan_val : 1; // default rowspan = 1
 
@@ -129,7 +156,7 @@ function tablepress_ext_rowspan_all_adjust_html($output, $table, $render_options
 
 
     // The following manipulations change the DOM tree,
-    // this would intefere in the loop above, 
+    // this would intefere in the loop above,
     // hence this is done in a separate step afterwards:
 
     foreach ($trigger_cells as $cell) {
@@ -143,8 +170,9 @@ function tablepress_ext_rowspan_all_adjust_html($output, $table, $render_options
 
     // change td to th for the new row
     $thead_td_cells = $xpath->query('.//td', $thead);
-    foreach ($thead_td_cells as $td_cell)
+    foreach ($thead_td_cells as $td_cell) {
         $changed_th_cell = dom_change_tagname($td_cell, 'th');
+    }
 
 
     $newHtml = dom_to_fragment($table);
