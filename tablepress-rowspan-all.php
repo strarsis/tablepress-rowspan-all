@@ -2,7 +2,7 @@
 /*
 Plugin Name: TablePress Extension: Rowspans everywhere
 Description: Allows using rowspans in thead.
-Version: 1.3.0
+Version: 2.0.0
 Author: strarsis <strarsis@gmail.com>
 GitHub Plugin URI: strarsis/tablepress-rowspan-all
 */
