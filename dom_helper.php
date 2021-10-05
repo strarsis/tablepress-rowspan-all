@@ -42,13 +42,12 @@ function dom_to_fragment($el) {
 }
 }
 
-if(  !function_exists('dom_parent_position')  ) {
-// Determines position of child node in parent node
-// Returns -1 if node wasn't found in parent - 
-// which happens with a root element that is no child of another element.
-function dom_parent_position($el) {
-  $el_parent   = $el->parentNode;
-  $el_siblings = $el_parent->childNodes;
+if(  !function_exists('dom_sibling_position')  ) {
+// Determines position of child node relative to given siblings node
+// Returns -1 if node wasn't found between given siblings - 
+// which happens with a root element that is no child of another element 
+// or when the node isn't a sibling of any of the given siblings.
+function dom_sibling_position($el, $el_siblings) {
   for($el_sibling_index = 0; $el_sibling_index <= $el_siblings->length; $el_sibling_index++) {
     $el_sibling = $el_siblings->item($el_sibling_index);
     if($el->isSameNode($el_sibling)) {

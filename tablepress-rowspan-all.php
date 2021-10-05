@@ -130,17 +130,18 @@ function tablepress_ext_rowspan_all_adjust_html($output, $table, $render_options
     $last_row_no = 0;
     foreach ($trigger_cells as $cell) {
         // row of cell
-        $row = $xpath->query('parent::tr', $cell)->item(0);
+        $parent_row = $xpath->query('parent::tr', $cell)->item(0);
 
         // only continous rows after head (2nd test)
-        $row_no = dom_parent_position($row);
+        $row_no = dom_sibling_position($parent_row, $parent_row->parentNode->getElementsByTagName('tr'));
         if ($row_no > ($last_row_no + 1)) { // when more than one row is skipped
             continue;
         }
         $last_row_no = $row_no;
 
+
         // find thead cell above this cell (in same physical column)
-        $cell_no            = dom_parent_position($cell); // cell no = column no
+        $cell_no            = dom_sibling_position($cell, $cell->parentNode->getElementsByTagName('td')); // cell no = column no
         $thead_cell_phys_no = $thead_cells_phys[$cell_no];
         $thead_cell         = $thead_cells->item($thead_cell_phys_no);
 
